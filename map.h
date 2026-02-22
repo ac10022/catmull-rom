@@ -6,9 +6,15 @@
 
 #include "raylib.h"
 
-#define MAX_MAP_LENGTH          1024
-#define WINDOW_WIDTH        800
-#define WINDOW_HEIGHT       600
+#define MAX_MAP_LENGTH      1024
+#define WINDOW_WIDTH        1280
+#define WINDOW_HEIGHT       720
+
+#define SAMPLES_PER_SECOND  60
+#define SONG_END_BUFFER     3.0f 
+
+#define TRAIL_GHOSTS        5    
+#define TRAIL_TIME_STEP     0.01f
 
 typedef struct {
     Vector2 pos;
@@ -24,6 +30,11 @@ typedef struct {
     float oncoming_timestamps[MAX_MAP_LENGTH];
     unsigned int num_oncoming_positions;
     unsigned int track_index;
+
+    unsigned int current_render_index;
+    
+    Vector2* pathLUT;
+    unsigned int total_samples;
 } Track;
 
 void AddNoteToMap(FILE* open_file, HitCircle* note);
@@ -32,7 +43,10 @@ HitCircle* ReadMap(const char* in_file, size_t* count);
 void CatmullRom(float t, Vector2* out, Vector2* p_k0, Vector2* p_k1, Vector2* p_k2, Vector2* p_k3);
 void MapSetup(unsigned int map_length, HitCircle* circles);
 void TrackSetup(Track* tracks, HitCircle* circles, unsigned int map_length);
-void UpdateTrackPositions(Track* tracks, float song_time);
+
+void UpdateTrackPositions(Track* tracks, float song_time, unsigned int frame_counter);
 void RenderTracks(Track* tracks, float song_time);
+void MakeMap(void);
+void CheckForKeyPresses(Track* tracks, float song_time);
 
 #endif
